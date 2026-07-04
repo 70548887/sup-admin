@@ -1,0 +1,19 @@
+{
+  "name": "sup-admin",
+  "private": true,
+  "scripts": {
+    "dev:admin": "pnpm --filter admin dev",
+    "dev:tenant": "pnpm --filter tenant-admin dev",
+    "dev:supplier": "pnpm --filter supplier dev",
+    "dev:customer": "pnpm --filter customer dev",
+    "build:all": "pnpm --filter admin build && pnpm --filter tenant-admin build && pnpm --filter supplier build && pnpm --filter customer build",
+    "build:admin": "pnpm --filter admin build",
+    "build:tenant": "pnpm --filter tenant-admin build",
+    "build:supplier": "pnpm --filter supplier build",
+    "build:customer": "pnpm --filter customer build"
+  },
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=8"
+  }
+}

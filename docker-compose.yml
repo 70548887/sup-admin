@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "${WEB_PORT:-3000}:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  api:
+    build: ../sup-platform
+    env_file: ../sup-platform/.env
+    ports:
+      - "${API_PORT:-8080}:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root123}
+      MYSQL_DATABASE: ${DB_NAME:-sup_platform}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+
+volumes:
+  mysql_data:
+  redis_data:
