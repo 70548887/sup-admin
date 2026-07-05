@@ -8,36 +8,55 @@
       </template>
 
       <!-- 搜索栏 -->
-      <el-form :inline="true" :model="searchForm" class="search-form">
-        <el-form-item label="商品名称">
-          <el-input v-model="searchForm.name" placeholder="搜索商品" clearable @keyup.enter="fetchData" />
-        </el-form-item>
-        <el-form-item label="分类">
-          <el-select v-model="searchForm.categoryId" placeholder="全部分类" clearable>
-            <el-option v-for="cat in categories" :key="cat.id" :label="cat.name" :value="cat.id" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="fetchData">搜索</el-button>
-        </el-form-item>
-      </el-form>
+      <div class="search-bar">
+        <el-input
+          v-model="searchForm.name"
+          placeholder="搜索商品名称"
+          clearable
+          class="search-input"
+          @keyup.enter="fetchData"
+        >
+          <template #append>
+            <el-button :icon="Search" @click="fetchData" />
+          </template>
+        </el-input>
+      </div>
+
+      <!-- 分类导航栏 -->
+      <div class="category-nav">
+        <el-radio-group v-model="searchForm.categoryId" size="large" @change="onCategoryChange">
+          <el-radio-button :label="undefined">全部</el-radio-button>
+          <el-radio-button v-for="cat in categories" :key="cat.id" :label="cat.id">
+            {{ cat.name }}
+          </el-radio-button>
+        </el-radio-group>
+      </div>
 
       <!-- 商品卡片 -->
       <div class="goods-grid" v-loading="loading">
         <el-card v-for="item in tableData" :key="item.id" shadow="hover" class="goods-card">
+          <div class="goods-image">
+            <el-image :src="getGoodsImage(item)" fit="cover" class="image">
+              <template #error>
+                <div class="image-placeholder">
+                  <el-icon :size="40" color="#909399"><Picture /></el-icon>
+                </div>
+              </template>
+            </el-image>
+          </div>
           <div class="goods-info">
-            <h4>{{ item.name }}</h4>
+            <h4 class="goods-name" :title="item.name">{{ item.name }}</h4>
             <p class="goods-category">{{ item.categoryName }}</p>
-            <div class="goods-price">¥{{ item.price }}</div>
             <div class="goods-meta">
               <span>库存: {{ item.stock }}</span>
               <span>销量: {{ item.salesCount }}</span>
             </div>
-          </div>
-          <div class="goods-actions">
-            <el-button type="primary" size="small" @click="$router.push(`/goods/${item.id}`)">
-              查看详情
-            </el-button>
+            <div class="goods-bottom">
+              <div class="goods-price">¥{{ item.price }}</div>
+              <el-button type="primary" size="small" @click="goDetail(item.id)">
+                购买
+              </el-button>
+            </div>
           </div>
         </el-card>
       </div>
@@ -61,11 +80,13 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { Search, Picture } from '@element-plus/icons-vue'
 import { getGoodsList, getCategoryList, type CustomerGoods, type Category } from '@/api/goods'
 
 const route = useRoute()
+const router = useRouter()
 const loading = ref(false)
 const tableData = ref<CustomerGoods[]>([])
 const categories = ref<Category[]>([])
@@ -80,6 +101,20 @@ const pagination = reactive({
   size: 12,
   total: 0,
 })
+
+function getGoodsImage(item: CustomerGoods): string {
+  // 商品无图片字段，使用商品名称前四字生成占位图
+  return `https://placehold.co/280x180/f5f7fa/909399?text=${encodeURIComponent(item.name.slice(0, 4))}`
+}
+
+function goDetail(id: number) {
+  router.push(`/goods/${id}`)
+}
+
+function onCategoryChange() {
+  pagination.page = 1
+  fetchData()
+}
 
 async function fetchCategories() {
   try {
@@ -107,9 +142,8 @@ async function fetchData() {
 
 // 监听 URL query 的 categoryId
 watch(() => route.query.categoryId, (val) => {
-  if (val) {
-    searchForm.categoryId = Number(val)
-  }
+  searchForm.categoryId = val ? Number(val) : undefined
+  pagination.page = 1
   fetchData()
 }, { immediate: false })
 
@@ -123,26 +157,79 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.search-form {
+.search-bar {
   margin-bottom: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.search-input {
+  max-width: 360px;
+}
+
+.category-nav {
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e4e7ed;
+  overflow-x: auto;
 }
 
 .goods-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
   min-height: 100px;
 }
 
 .goods-card {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  transition: transform 0.2s;
 }
 
-.goods-info h4 {
+.goods-card:hover {
+  transform: translateY(-4px);
+}
+
+.goods-image {
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+}
+
+.image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f7fa;
+}
+
+.goods-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.goods-name {
   margin: 0 0 8px 0;
   color: #303133;
+  font-size: 16px;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  min-height: 44px;
 }
 
 .goods-category {
@@ -151,27 +238,29 @@ onMounted(() => {
   margin: 0 0 8px 0;
 }
 
-.goods-price {
-  font-size: 18px;
-  font-weight: bold;
-  color: #f56c6c;
-  margin-bottom: 8px;
-}
-
 .goods-meta {
   display: flex;
   gap: 16px;
   font-size: 12px;
   color: #909399;
+  margin-bottom: 12px;
 }
 
-.goods-actions {
-  margin-top: 12px;
-  text-align: right;
+.goods-bottom {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.goods-price {
+  font-size: 20px;
+  font-weight: bold;
+  color: #f56c6c;
 }
 
 .pagination {
-  margin-top: 16px;
+  margin-top: 24px;
   justify-content: flex-end;
 }
 </style>

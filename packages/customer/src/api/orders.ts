@@ -44,6 +44,13 @@ export async function getOrderShow(id: number): Promise<CustomerOrder> {
 }
 
 /**
+ * 通过订单号查询订单详情
+ */
+export async function getOrderShowBySn(orderSn: string): Promise<CustomerOrder> {
+  return customerClient.post('/openapi/customer/Order/Show', { order_no: orderSn }) as any
+}
+
+/**
  * 订单状态处理
  */
 export async function orderStatusHandle(data: {

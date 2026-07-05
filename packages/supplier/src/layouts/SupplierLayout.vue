@@ -14,6 +14,10 @@
         text-color="#bfcbd9"
         active-text-color="#409eff"
       >
+        <el-menu-item index="/dashboard">
+          <el-icon><DataLine /></el-icon>
+          <template #title>仪表板</template>
+        </el-menu-item>
         <el-menu-item index="/goods">
           <el-icon><Goods /></el-icon>
           <template #title>商品管理</template>
@@ -21,6 +25,18 @@
         <el-menu-item index="/orders">
           <el-icon><List /></el-icon>
           <template #title>订单管理</template>
+        </el-menu-item>
+        <el-menu-item index="/settlement">
+          <el-icon><Money /></el-icon>
+          <template #title>结算管理</template>
+        </el-menu-item>
+        <el-menu-item index="/notification">
+          <el-icon><Bell /></el-icon>
+          <template #title>通知设置</template>
+        </el-menu-item>
+        <el-menu-item index="/account">
+          <el-icon><User /></el-icon>
+          <template #title>账户信息</template>
         </el-menu-item>
       </el-menu>
     </el-aside>
@@ -60,7 +76,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Expand, Fold, ArrowDown, Goods, List } from '@element-plus/icons-vue'
+import { Expand, Fold, ArrowDown, Goods, List, DataLine, User, Money, Bell } from '@element-plus/icons-vue'
 import { clearCredentials } from '@/api/legacyAuth'
 
 const route = useRoute()

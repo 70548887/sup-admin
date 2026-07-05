@@ -45,6 +45,14 @@ export interface PaginatedResult<T> {
   size: number
 }
 
+export interface BuyGoodsResult {
+  orderId: number
+  orderSn: string
+  status: string
+  totalAmount: string
+  createdAt: string
+}
+
 /**
  * 获取商品分类列表
  */
@@ -73,6 +81,13 @@ export async function buyGoods(data: {
   goodsId: number
   buyNumber: number
   buyParams?: Record<string, any>
-}): Promise<{ orderId: number; orderSn: string }> {
-  return customerClient.post('/openapi/customer/Goods/Buy', data) as any
+}): Promise<BuyGoodsResult> {
+  const res = (await customerClient.post('/openapi/customer/Goods/Buy', data)) as any
+  return {
+    orderId: res.order_id,
+    orderSn: res.order_no,
+    status: res.status,
+    totalAmount: res.total_amount,
+    createdAt: res.created_at,
+  }
 }

@@ -9,16 +9,14 @@
       </template>
 
       <el-form ref="formRef" :model="form" :rules="rules" label-width="100px" style="max-width: 500px">
+        <el-form-item label="商品名称">
+          <span>{{ goodsName }}</span>
+        </el-form-item>
         <el-form-item label="当前售价">
           <span class="current-price">¥{{ currentPrice }}</span>
         </el-form-item>
         <el-form-item label="新售价" prop="price">
           <el-input v-model="form.price" placeholder="请输入新售价">
-            <template #prepend>¥</template>
-          </el-input>
-        </el-form-item>
-        <el-form-item label="新成本价" prop="costPrice">
-          <el-input v-model="form.costPrice" placeholder="请输入新成本价（选填）">
             <template #prepend>¥</template>
           </el-input>
         </el-form-item>
@@ -35,6 +33,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
+import { formatDecimal } from '@sup/shared'
 import { getGoodsShow, editGoodsPrice } from '@/api/goods'
 
 const route = useRoute()
@@ -42,11 +41,12 @@ const router = useRouter()
 const formRef = ref<FormInstance>()
 const loading = ref(false)
 const submitting = ref(false)
-const currentPrice = ref('0')
+const currentPrice = ref('0.00')
+const goodsName = ref('')
+const goodsSn = ref('')
 
 const form = reactive({
   price: '',
-  costPrice: '',
 })
 
 const rules: FormRules = {
@@ -54,15 +54,16 @@ const rules: FormRules = {
 }
 
 async function fetchData() {
-  const id = Number(route.params.id)
-  if (!id) return
+  const sn = route.params.id as string
+  if (!sn) return
 
+  goodsSn.value = sn
   loading.value = true
   try {
-    const goods = await getGoodsShow(id)
-    currentPrice.value = goods.price
+    const goods = await getGoodsShow(sn)
+    goodsName.value = goods.name
+    currentPrice.value = formatDecimal(goods.price)
     form.price = goods.price
-    form.costPrice = goods.costPrice || ''
   } catch (error: any) {
     ElMessage.error(error.message || '获取商品信息失败')
   } finally {
@@ -74,16 +75,14 @@ async function handleSubmit() {
   const valid = await formRef.value?.validate().catch(() => false)
   if (!valid) return
 
-  const id = Number(route.params.id)
   submitting.value = true
   try {
     await editGoodsPrice({
-      id,
+      goods_sn: goodsSn.value,
       price: form.price,
-      costPrice: form.costPrice || undefined,
     })
     ElMessage.success('价格更新成功')
-    router.push(`/goods/${id}`)
+    router.push(`/goods/${goodsSn.value}`)
   } catch (error: any) {
     ElMessage.error(error.message || '保存价格失败')
   } finally {

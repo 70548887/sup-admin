@@ -35,6 +35,13 @@ export function getAppId(): string {
 }
 
 /**
+ * 获取已保存的 AppSecret
+ */
+export function getAppSecret(): string {
+  return localStorage.getItem(STORAGE_KEY_APP_SECRET) || ''
+}
+
+/**
  * 生成 Legacy 签名请求头
  * 签名算法: HMAC-SHA256(AppSecret, AppId + AppSecret + RequestURI + Timestamp)
  */

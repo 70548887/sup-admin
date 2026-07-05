@@ -16,7 +16,31 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: '',
-        redirect: '/goods',
+        redirect: '/dashboard',
+      },
+      {
+        path: 'dashboard',
+        name: 'Dashboard',
+        component: () => import('../views/Dashboard/Dashboard.vue'),
+        meta: { title: '仪表板' },
+      },
+      {
+        path: 'account',
+        name: 'Account',
+        component: () => import('../views/Account/Account.vue'),
+        meta: { title: '账户信息' },
+      },
+      {
+        path: 'settlement',
+        name: 'Settlement',
+        component: () => import('../views/Settlement/Settlement.vue'),
+        meta: { title: '结算管理' },
+      },
+      {
+        path: 'notification',
+        name: 'Notification',
+        component: () => import('../views/Notification/Notification.vue'),
+        meta: { title: '通知设置' },
       },
       {
         path: 'goods',
@@ -25,15 +49,15 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '商品管理' },
       },
       {
-        path: 'goods/:id',
-        name: 'GoodsDetail',
-        component: () => import('../views/Goods/Detail.vue'),
-        meta: { title: '商品详情' },
+        path: 'goods/create',
+        name: 'GoodsCreate',
+        component: () => import('../views/Goods/GoodsEdit.vue'),
+        meta: { title: '新建商品' },
       },
       {
-        path: 'goods/:id/edit',
+        path: 'goods/edit/:id',
         name: 'GoodsEdit',
-        component: () => import('../views/Goods/Edit.vue'),
+        component: () => import('../views/Goods/GoodsEdit.vue'),
         meta: { title: '编辑商品' },
       },
       {
@@ -43,26 +67,39 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '编辑价格' },
       },
       {
+        path: 'goods/:id',
+        name: 'GoodsDetail',
+        component: () => import('../views/Goods/GoodsDetail.vue'),
+        meta: { title: '商品详情' },
+      },
+      {
         path: 'orders',
         name: 'OrderList',
         component: () => import('../views/Orders/List.vue'),
         meta: { title: '订单管理' },
       },
       {
-        path: 'orders/:id',
+        path: 'orders/:orderSn',
         name: 'OrderDetail',
         component: () => import('../views/Orders/Detail.vue'),
         meta: { title: '订单详情' },
       },
       {
-        path: 'orders/:id/handle',
+        path: 'orders/:orderSn/handle',
         name: 'OrderStatusHandle',
         component: () => import('../views/Orders/StatusHandle.vue'),
         meta: { title: '订单处理' },
       },
+      {
+        path: 'orders/:orderSn/schedule',
+        name: 'OrderSchedule',
+        component: () => import('../views/Orders/OrderSchedule.vue'),
+        meta: { title: '订单进度' },
+      },
     ],
   },
 ]
+
 
 const router = createRouter({
   history: createWebHistory(),

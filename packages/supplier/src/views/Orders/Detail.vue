@@ -14,13 +14,13 @@
           <el-tag :type="statusType(order.status)">{{ statusText(order.status) }}</el-tag>
         </el-descriptions-item>
         <el-descriptions-item label="商品">{{ order.goodsName }}</el-descriptions-item>
-        <el-descriptions-item label="商品ID">{{ order.goodsId }}</el-descriptions-item>
+        <el-descriptions-item label="商品编号">{{ order.goodsSn }}</el-descriptions-item>
         <el-descriptions-item label="数量">{{ order.buyNumber }}</el-descriptions-item>
-        <el-descriptions-item label="单价">¥{{ order.unitPrice }}</el-descriptions-item>
-        <el-descriptions-item label="总金额">¥{{ order.amount }}</el-descriptions-item>
-        <el-descriptions-item label="客户">{{ order.customerName }}</el-descriptions-item>
-        <el-descriptions-item label="创建时间">{{ formatTime(order.createdAt) }}</el-descriptions-item>
-        <el-descriptions-item label="更新时间">{{ formatTime(order.updatedAt) }}</el-descriptions-item>
+        <el-descriptions-item label="单价">¥{{ formatDecimal(order.unitPrice) }}</el-descriptions-item>
+        <el-descriptions-item label="总金额">¥{{ formatDecimal(order.amount) }}</el-descriptions-item>
+        <el-descriptions-item label="客户">{{ order.customerName || order.customerSn }}</el-descriptions-item>
+        <el-descriptions-item label="创建时间">{{ formatDateTime(order.createdAt) }}</el-descriptions-item>
+        <el-descriptions-item label="更新时间">{{ formatDateTime(order.updatedAt) }}</el-descriptions-item>
         <el-descriptions-item label="备注" :span="2">{{ order.remark || '无' }}</el-descriptions-item>
       </el-descriptions>
 
@@ -32,42 +32,71 @@
           </el-descriptions-item>
         </el-descriptions>
       </div>
+
+      <div v-if="order?.statusChanges?.length" style="margin-top: 20px">
+        <h4>状态流转</h4>
+        <OrderTimeline :status-changes="mappedStatusChanges" />
+      </div>
+
+      <div v-if="order?.cards?.length" style="margin-top: 20px">
+        <h4>已发卡密</h4>
+        <CardViewer :cards="order.cards" />
+      </div>
     </el-card>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { getOrderShow, type SupplierOrder } from '@/api/orders'
+import { formatDateTime, formatDecimal, OrderTimeline, CardViewer } from '@sup/shared'
+import {
+  getOrderShow,
+  SUPPLIER_ORDER_STATUS,
+  mapSupplierStatusToShared,
+  type SupplierOrderDetail,
+  type OrderStatusChangeItem,
+} from '@/api/orders'
 
 const route = useRoute()
 const loading = ref(false)
-const order = ref<SupplierOrder | null>(null)
+const order = ref<SupplierOrderDetail | null>(null)
+
+const mappedStatusChanges = computed(() => {
+  if (!order.value?.statusChanges) return []
+  return order.value.statusChanges.map((item: OrderStatusChangeItem) => ({
+    ...item,
+    status: mapSupplierStatusToShared(item.status),
+  }))
+})
 
 function statusText(status: number): string {
-  const map: Record<number, string> = { 0: '待确认', 1: '已确认', 2: '已发货', 3: '已完成', 4: '已取消' }
-  return map[status] || '未知'
+  return SUPPLIER_ORDER_STATUS[status] || '未知'
 }
 
 function statusType(status: number): string {
-  const map: Record<number, string> = { 0: 'warning', 1: 'primary', 2: 'info', 3: 'success', 4: 'danger' }
+  const map: Record<number, string> = {
+    1: 'warning',
+    2: 'info',
+    3: 'primary',
+    4: 'info',
+    5: 'info',
+    6: 'success',
+    7: 'danger',
+    8: 'danger',
+    9: 'danger',
+  }
   return map[status] || 'info'
 }
 
-function formatTime(ts: number): string {
-  if (!ts) return '-'
-  return new Date(ts * 1000).toLocaleString('zh-CN')
-}
-
 async function fetchData() {
-  const id = Number(route.params.id)
-  if (!id) return
+  const orderSn = route.params.orderSn as string
+  if (!orderSn) return
 
   loading.value = true
   try {
-    order.value = await getOrderShow(id)
+    order.value = await getOrderShow(orderSn)
   } catch (error: any) {
     ElMessage.error(error.message || '获取订单详情失败')
   } finally {

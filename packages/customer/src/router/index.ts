@@ -27,7 +27,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'goods/:id',
         name: 'GoodsDetail',
-        component: () => import('../views/Goods/Detail.vue'),
+        component: () => import('../views/Goods/GoodsDetail.vue'),
         meta: { title: '商品详情' },
       },
       {
@@ -39,20 +39,44 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'orders',
         name: 'OrderList',
-        component: () => import('../views/Orders/List.vue'),
+        component: () => import('../views/Orders/OrderList.vue'),
         meta: { title: '我的订单' },
       },
       {
         path: 'orders/:id',
         name: 'OrderDetail',
-        component: () => import('../views/Orders/Detail.vue'),
+        component: () => import('../views/Orders/OrderDetail.vue'),
         meta: { title: '订单详情' },
+      },
+      {
+        path: 'order/create',
+        name: 'OrderCreate',
+        component: () => import('../views/Orders/OrderCreate.vue'),
+        meta: { title: '确认下单' },
+      },
+      {
+        path: 'order/pay/:orderSn',
+        name: 'OrderPay',
+        component: () => import('../views/Orders/OrderPay.vue'),
+        meta: { title: '订单支付' },
       },
       {
         path: 'account',
         name: 'Account',
-        component: () => import('../views/Account.vue'),
+        component: () => import('../views/Account/Account.vue'),
         meta: { title: '我的账户' },
+      },
+      {
+        path: 'account/recharge',
+        name: 'Recharge',
+        component: () => import('../views/Account/Recharge.vue'),
+        meta: { title: '账户充值' },
+      },
+      {
+        path: 'account/api-keys',
+        name: 'ApiKeys',
+        component: () => import('../views/Account/ApiKeys.vue'),
+        meta: { title: 'API 密钥' },
       },
     ],
   },

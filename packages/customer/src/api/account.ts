@@ -18,3 +18,10 @@ export interface CustomerAccount {
 export async function getAccountShow(): Promise<CustomerAccount> {
   return customerClient.get('/openapi/customer/CustomerAccount/Show') as any
 }
+
+/**
+ * 重新生成 API 密钥
+ */
+export async function regenerateAppSecret(): Promise<{ appId: string; appSecret: string }> {
+  return customerClient.post('/openapi/customer/CustomerAccount/RegenerateSecret') as any
+}
