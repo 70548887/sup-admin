@@ -16,6 +16,7 @@
         <el-form-item>
           <el-button type="primary" @click="onSearch">搜索</el-button>
           <el-button @click="onReset">重置</el-button>
+          <el-button type="warning" :icon="Download" @click="handleExport">导出商品</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -80,6 +81,7 @@
 <script setup lang="ts">
 import { reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Download } from '@element-plus/icons-vue'
 import { useTable, formatDateTime, formatDecimal, GOODS_STATUS } from '@sup/shared'
 import type { Goods } from '@sup/shared'
 import { updateGoodsStatus } from '../../api/goods'
@@ -118,6 +120,27 @@ async function handleStatusChange(row: Goods, status: number) {
       ElMessage.error(e.message || '操作失败')
     }
   }
+}
+
+function exportCSV(data: any[], filename: string) {
+  if (!data.length) {
+    ElMessage.warning('暂无数据可导出')
+    return
+  }
+  const headers = Object.keys(data[0]).join(',')
+  const rows = data.map(row => Object.values(row).join(','))
+  const csv = [headers, ...rows].join('\n')
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `${filename}_${new Date().toISOString().slice(0, 10)}.csv`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+function handleExport() {
+  exportCSV(tableData.value, '商品列表')
 }
 
 onMounted(() => {

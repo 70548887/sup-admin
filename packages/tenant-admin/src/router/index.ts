@@ -54,6 +54,18 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../views/Subscription/Index.vue'),
         meta: { title: '订阅管理', icon: 'Medal', roles: ['boss', 'finance'] },
       },
+      {
+        path: 'settings',
+        name: 'Settings',
+        component: () => import('../views/Settings/Index.vue'),
+        meta: { title: '租户设置', icon: 'Setting', roles: ['boss'] },
+      },
+      {
+        path: 'finance/recharges',
+        name: 'FinanceRecharges',
+        component: () => import('../views/Finance/Recharges.vue'),
+        meta: { title: '充值记录', icon: 'Wallet', roles: ['boss', 'finance'] },
+      },
     ],
   },
 ]

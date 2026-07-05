@@ -5,5 +5,5 @@ export interface LoginResponse {
 }
 
 export async function loginApi(username: string, password: string): Promise<LoginResponse> {
-  return apiClient.post('/admin/login', { username, password }) as unknown as LoginResponse
+  return apiClient.post('/auth/login', { username, password, role: 'admin' }) as unknown as LoginResponse
 }

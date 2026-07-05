@@ -10,6 +10,12 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: false },
   },
   {
+    path: '/register',
+    name: 'Register',
+    component: () => import('../views/Register.vue'),
+    meta: { requiresAuth: false, title: '供货商入驻' },
+  },
+  {
     path: '/',
     component: () => import('../layouts/SupplierLayout.vue'),
     meta: { requiresAuth: true },
@@ -95,6 +101,38 @@ const routes: RouteRecordRaw[] = [
         name: 'OrderSchedule',
         component: () => import('../views/Orders/OrderSchedule.vue'),
         meta: { title: '订单进度' },
+      },
+      // --- Cards ---
+      {
+        path: 'cards',
+        name: 'CardList',
+        component: () => import('../views/Cards/List.vue'),
+        meta: { title: '卡密管理' },
+      },
+      {
+        path: 'cards/import',
+        name: 'CardImport',
+        component: () => import('../views/Cards/Import.vue'),
+        meta: { title: '导入卡密' },
+      },
+      // --- Developer ---
+      {
+        path: 'developer',
+        name: 'DeveloperCenter',
+        component: () => import('../views/Developer/AppList.vue'),
+        meta: { title: '开发者中心' },
+      },
+      {
+        path: 'developer/create',
+        name: 'AppCreate',
+        component: () => import('../views/Developer/AppCreate.vue'),
+        meta: { title: '新建应用' },
+      },
+      {
+        path: 'developer/detail',
+        name: 'AppDetail',
+        component: () => import('../views/Developer/AppDetail.vue'),
+        meta: { title: '应用详情' },
       },
     ],
   },

@@ -73,7 +73,7 @@ async function handleLogin() {
 
     loading.value = true
     try {
-      const data = await apiClient.post('/tenant-admin/login', loginForm) as unknown as { token: string }
+      const data = await apiClient.post('/auth/login', { ...loginForm, role: 'admin' }) as unknown as { token: string }
       authStore.setToken(data.token)
       ElMessage.success('登录成功')
       const redirect = (route.query.redirect as string) || '/dashboard'

@@ -13,6 +13,7 @@
           <el-menu-item index="/goods">商品</el-menu-item>
           <el-menu-item index="/categories">分类</el-menu-item>
           <el-menu-item index="/orders">我的订单</el-menu-item>
+          <el-menu-item index="/developer">开发者中心</el-menu-item>
           <el-menu-item index="/account">账户</el-menu-item>
         </el-menu>
       </div>
@@ -43,7 +44,6 @@
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ArrowDown } from '@element-plus/icons-vue'
-import { clearCredentials } from '@/api/legacyAuth'
 
 const route = useRoute()
 const router = useRouter()
@@ -53,12 +53,13 @@ const activeMenu = computed(() => {
   if (path.startsWith('/goods')) return '/goods'
   if (path.startsWith('/categories')) return '/categories'
   if (path.startsWith('/orders')) return '/orders'
+  if (path.startsWith('/developer')) return '/developer'
   if (path.startsWith('/account')) return '/account'
   return '/goods'
 })
 
 function handleLogout() {
-  clearCredentials()
+  localStorage.removeItem('customer_token')
   router.push('/login')
 }
 </script>

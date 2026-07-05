@@ -38,6 +38,10 @@
           <el-icon><User /></el-icon>
           <template #title>账户信息</template>
         </el-menu-item>
+        <el-menu-item index="/developer">
+          <el-icon><Connection /></el-icon>
+          <template #title>开发者中心</template>
+        </el-menu-item>
       </el-menu>
     </el-aside>
 
@@ -76,15 +80,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Expand, Fold, ArrowDown, Goods, List, DataLine, User, Money, Bell } from '@element-plus/icons-vue'
-import { clearCredentials } from '@/api/legacyAuth'
+import { Expand, Fold, ArrowDown, Goods, List, DataLine, User, Money, Bell, Connection } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
 const collapsed = ref(false)
 
 function handleLogout() {
-  clearCredentials()
+  localStorage.removeItem('supplier_token')
   router.push('/login')
 }
 </script>

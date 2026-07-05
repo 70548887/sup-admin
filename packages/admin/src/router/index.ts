@@ -37,10 +37,28 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '新建用户', hidden: true },
       },
       {
+        path: 'users/:id/edit',
+        name: 'UserEdit',
+        component: () => import('../views/Users/Edit.vue'),
+        meta: { title: '编辑用户', hidden: true },
+      },
+      {
         path: 'goods',
         name: 'GoodsList',
         component: () => import('../views/Goods/List.vue'),
         meta: { title: '商品管理', icon: 'Goods' },
+      },
+      {
+        path: 'goods/:id',
+        name: 'GoodsDetail',
+        component: () => import('../views/Goods/Detail.vue'),
+        meta: { title: '商品详情', hidden: true },
+      },
+      {
+        path: 'goods/:id/edit',
+        name: 'GoodsEdit',
+        component: () => import('../views/Goods/Edit.vue'),
+        meta: { title: '编辑商品', hidden: true },
       },
       {
         path: 'goods/pending',
@@ -168,6 +186,26 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../views/DockingTasks/List.vue'),
         meta: { title: '对接任务', icon: 'Link' },
       },
+      // --- Settlement ---
+      {
+        path: 'settlement',
+        name: 'SettlementList',
+        component: () => import('../views/Settlement/List.vue'),
+        meta: { title: '结算管理', icon: 'Money' },
+      },
+      {
+        path: 'settlement/:id',
+        name: 'SettlementDetail',
+        component: () => import('../views/Settlement/Detail.vue'),
+        meta: { title: '结算详情', hidden: true },
+      },
+      // --- Settings ---
+      {
+        path: 'settings',
+        name: 'Settings',
+        component: () => import('../views/Settings/Index.vue'),
+        meta: { title: '系统设置', icon: 'Setting' },
+      },
       // --- Billing ---
       {
         path: 'billing/plans',
@@ -186,6 +224,39 @@ const routes: RouteRecordRaw[] = [
         name: 'BillingInvoices',
         component: () => import('../views/Billing/Invoices.vue'),
         meta: { title: '账单管理', hidden: true },
+      },
+      // --- Cards ---
+      {
+        path: 'cards',
+        name: 'CardList',
+        component: () => import('../views/Cards/List.vue'),
+        meta: { title: '卡密管理', icon: 'Ticket' },
+      },
+      {
+        path: 'cards/import',
+        name: 'CardImport',
+        component: () => import('../views/Cards/Import.vue'),
+        meta: { title: '导入卡密', hidden: true },
+      },
+      // --- Notifications ---
+      {
+        path: 'notifications',
+        name: 'NotificationList',
+        component: () => import('../views/Notifications/List.vue'),
+        meta: { title: '通知管理', icon: 'Bell' },
+      },
+      // --- Suppliers ---
+      {
+        path: 'suppliers',
+        name: 'SupplierList',
+        component: () => import('../views/Suppliers/List.vue'),
+        meta: { title: '供货商管理', icon: 'Shop' },
+      },
+      {
+        path: 'suppliers/:id',
+        name: 'SupplierDetail',
+        component: () => import('../views/Suppliers/Detail.vue'),
+        meta: { title: '供货商详情', hidden: true },
       },
     ],
   },

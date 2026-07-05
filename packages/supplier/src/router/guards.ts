@@ -1,5 +1,4 @@
 import type { Router } from 'vue-router'
-import { hasCredentials } from '@/api/legacyAuth'
 
 export function setupGuards(router: Router) {
   router.beforeEach((to, _from, next) => {
@@ -10,7 +9,8 @@ export function setupGuards(router: Router) {
     }
 
     // 需要认证但未登录，跳转登录页
-    if (!hasCredentials()) {
+    const token = localStorage.getItem('supplier_token')
+    if (!token) {
       next({ name: 'Login', query: { redirect: to.fullPath } })
       return
     }
